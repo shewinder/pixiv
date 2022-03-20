@@ -63,7 +63,7 @@ func pixGet(apiUrl string) (*http.Response, error) {
 // date: '2016-08-01'
 // mode (Past): [day, week, month, day_male, day_female, week_original, week_rookie,
 //               day_r18, day_male_r18, day_female_r18, week_r18, week_r18g]
-func IllustRanking(mode string, date string, offset string) (map[string]interface{}, error) {
+func IllustRanking(mode string, date string, offset string) ([]*Illust, error) {
 	apiUrl := fmt.Sprintf("%v/v1/illust/ranking", HOST)
 	data := url.Values{}
 	data.Set("mode", mode)
@@ -86,9 +86,12 @@ func IllustRanking(mode string, date string, offset string) (map[string]interfac
 		fmt.Println("read err", err)
 		return nil, err
 	}
-	var m map[string]interface{}
-	json.Unmarshal(b, &m)
-	return m, nil
+	type Resp struct {
+		Illusts []*Illust `json:"illusts"`
+	}
+	var res Resp
+	json.Unmarshal(b, &res)
+	return res.Illusts, nil
 }
 
 func IllustDetail(illustId string) (*Illust, error) {

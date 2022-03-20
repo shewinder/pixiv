@@ -45,7 +45,7 @@ func auth(refreshToken string) (token string) {
 		fmt.Println("read resp err", err.Error())
 		return
 	}
-	var m map[string] interface{}
+	var m map[string]interface{}
 	err = json.Unmarshal(body, &m)
 	if err != nil {
 		fmt.Println("unmashal err", err)
