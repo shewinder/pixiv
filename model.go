@@ -53,3 +53,21 @@ type Illust struct {
 	Width     int  `json:"width"`
 	XRestrict int  `json:"x_restrict"`
 }
+
+type Illusts struct {
+	Illusts []*Illust `json:"illusts"`
+	NextUrl string    `json:"next_url"`
+}
+
+
+type ZipUrls struct {
+	Medium string `json:"medium"`
+}
+type Frames struct {
+	File  string `json:"file"`
+	Delay int    `json:"delay"`
+}
+type Ugoira struct {
+	ZipUrls ZipUrls  `json:"zip_urls"`
+	Frames  []Frames `json:"frames"`
+}
