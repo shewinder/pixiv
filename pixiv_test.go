@@ -11,6 +11,7 @@ func init() {
 
 func TestAuth(t *testing.T) {
 	token, _ := auth("5_wLcosaJG103dcOR_ES8ybX3NTwKVxEjH7nFVF9YRA")
+	t.Log(token)
 	assert.NotEqual(t, "", token)
 }
 
@@ -25,8 +26,9 @@ func TestUserIllusts(t *testing.T) {
 }
 
 func TestIllustDetai(t *testing.T) {
-	ill, _ := IllustDetail("87872301")
-	assert.Equal(t, 87872301, ill.ID)
+	ill, err := IllustDetail("97933376")
+	t.Log(ill, err)
+	assert.Equal(t, 97933376, ill.ID)
 }
 
 func TestUgoira(t *testing.T) {

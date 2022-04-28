@@ -42,7 +42,7 @@ func init() {
 	client = http.Client{}
 }
 
-func Get(path string, params map[string]string) []byte {
+func Get(path string, params map[string]string) ([]byte, error) {
 	apiurl := fmt.Sprintf("%v%v", HOST, path)
 	data := url.Values{}
 	for k, v := range params {
@@ -64,21 +64,21 @@ func Get(path string, params map[string]string) []byte {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Default().Println(err)
-		return nil
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
 		log.Default().Println(resp.Status, string(b))
-		return nil
+		return nil, fmt.Errorf("%v", resp.Status+string(b))
 	}
-	return b
+	return b, nil
 }
 
 // 作品排行
@@ -93,9 +93,12 @@ func IllustRanking(mode string, date string, offset string) (*Illusts, error) {
 		"date":   date,
 		"offset": offset,
 	}
-	b := Get(path, params)
+	b, err := Get(path, params)
+	if err != nil {
+		return nil, err
+	}
 	var illusts Illusts
-	err := json.Unmarshal(b, &illusts)
+	err = json.Unmarshal(b, &illusts)
 	return &illusts, err
 }
 
@@ -105,13 +108,16 @@ func IllustDetail(illustId string) (*Illust, error) {
 	params := map[string]string{
 		"illust_id": illustId,
 	}
-	b := Get(path, params)
+	b, err := Get(path, params)
+	if err != nil {
+		return nil, err
+	}
 
 	type Resp struct {
 		Illust *Illust `json:"illust"`
 	}
 	var res Resp
-	err := json.Unmarshal(b, &res)
+	err = json.Unmarshal(b, &res)
 	return res.Illust, err
 }
 
@@ -122,10 +128,13 @@ func IllustFollow(restrict string) (*Illusts, error) {
 	params := map[string]string{
 		"restrict": restrict,
 	}
-	b := Get(path, params)
+	b, err := Get(path, params)
+	if err != nil {
+		return nil, err
+	}
 
 	var illusts Illusts
-	err := json.Unmarshal(b, &illusts)
+	err = json.Unmarshal(b, &illusts)
 	return &illusts, err
 }
 
@@ -137,10 +146,12 @@ func UserIllusts(userId string, offset string, type_ string) (*Illusts, error) {
 		"offset":  offset,
 		"type":    type_,
 	}
-	b := Get(path, params)
-
+	b, err := Get(path, params)
+	if err != nil {
+		return nil, err
+	}
 	var illusts Illusts
-	err := json.Unmarshal(b, &illusts)
+	err = json.Unmarshal(b, &illusts)
 	return &illusts, err
 }
 
@@ -150,13 +161,15 @@ func UgoiraMeta(illustId string) (*Ugoira, error) {
 	params := map[string]string{
 		"illust_id": illustId,
 	}
-	b := Get(path, params)
-
+	b, err := Get(path, params)
+	if err != nil {
+		return nil, err
+	}
 	type Resp struct {
 		UgoiraMetadata Ugoira `json:"ugoira_metadata"`
 	}
 	var resp Resp
-	err := json.Unmarshal(b, &resp)
+	err = json.Unmarshal(b, &resp)
 	return &resp.UgoiraMetadata, err
 }
 
@@ -169,9 +182,11 @@ func UserBookmarkIllust(userId string, restrict string, offset string) (*Illusts
 		"offset":   offset,
 		"filter":   "for_ios",
 	}
-	b := Get(path, params)
-
+	b, err := Get(path, params)
+	if err != nil {
+		return nil, err
+	}
 	var illusts Illusts
-	err := json.Unmarshal(b, &illusts)
+	err = json.Unmarshal(b, &illusts)
 	return &illusts, err
 }
